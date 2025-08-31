@@ -626,6 +626,22 @@ require('lazy').setup({
         end,
       })
 
+      --  language lsps
+      vim.lsp.enable 'gleam'
+      vim.lsp.enable 'biome'
+      vim.lsp.enable 'astro'
+      vim.lsp.enable 'css_variables'
+      vim.lsp.config('cssls', {
+        capabilities = capabilities,
+      })
+      vim.lsp.enable 'cssls'
+      vim.lsp.enable 'cssmodules'
+      vim.lsp.enable 'tailwindcss'
+      vim.lsp.config('jsonls', {
+        capabilities = capabilities,
+      })
+      vim.lsp.enable 'jsonls'
+
       -- Diagnostic Config
       -- See :help vim.diagnostic.Opts
       vim.diagnostic.config {
@@ -681,8 +697,9 @@ require('lazy').setup({
         --    https://github.com/pmizio/typescript-tools.nvim
         --
         -- But for many setups, the LSP (`ts_ls`) will work just fine
-        -- ts_ls = {},
-        --
+        ts_ls = {
+          enabled = true,
+        },
 
         lua_ls = {
           -- cmd = { ... },
@@ -732,6 +749,126 @@ require('lazy').setup({
             require('lspconfig')[server_name].setup(server)
           end,
         },
+      }
+    end,
+  },
+
+  -- file explorer
+  {
+    'nvim-neo-tree/neo-tree.nvim',
+    branch = 'v3.x',
+    lazy = false, -- load at startup
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'MunifTanjim/nui.nvim',
+      'nvim-tree/nvim-web-devicons', -- icons
+    },
+    config = function()
+      -- basic setup
+      require('neo-tree').setup()
+
+      -- keymaps for convenience
+      vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', { desc = 'Toggle [E]xplorer' })
+      vim.keymap.set('n', '<leader>o', '<cmd>Neotree focus<CR>', { desc = 'Focus [O]n explorer' })
+    end,
+  },
+
+  {
+    'antosha417/nvim-lsp-file-operations',
+    dependencies = {
+      'nvim-lua/plenary.nvim',
+      'nvim-neo-tree/neo-tree.nvim', -- ensure it loads after neo-tree
+    },
+    config = function()
+      require('lsp-file-operations').setup()
+    end,
+  },
+
+  {
+    's1n7ax/nvim-window-picker',
+    version = '2.*',
+    config = function()
+      require('window-picker').setup {
+        filter_rules = {
+          include_current_win = false,
+          autoselect_one = true,
+          bo = {
+            filetype = { 'neo-tree', 'neo-tree-popup', 'notify' },
+            buftype = { 'terminal', 'quickfix' },
+          },
+        },
+      }
+    end,
+  },
+
+  -- icons
+  {
+    'DaikyXendo/nvim-material-icon',
+    config = function()
+      require('nvim-web-devicons').setup {
+        override = {
+          zsh = {
+            icon = '',
+            color = '#428850',
+            cterm_color = '65',
+            name = 'Zsh',
+          },
+        },
+        -- globally enable different highlight colors per icon (default to true)
+        -- if set to false all icons will have the default icon's color
+        color_icons = true,
+        -- globally enable default icons (default to false)
+        -- will get overriden by `get_icons` option
+        default = true,
+      }
+    end,
+  },
+
+  { --lensline
+    'oribarilan/lensline.nvim',
+    tag = '1.0.0', -- or: branch = 'release/1.x' for latest non-breaking updates
+    event = 'LspAttach',
+    config = function()
+      require('lensline').setup {
+        providers = {
+          {
+            name = 'references',
+            enabled = true,
+            quiet_lsp = true,
+          },
+          {
+            name = 'last_author',
+            enabled = true,
+            cache_max_files = 50,
+          },
+          {
+            name = 'diagnostics',
+            enabled = false, -- disabled by default - enable explicitly to use
+            min_level = 'WARN', -- only show WARN and ERROR by default (HINT, INFO, WARN, ERROR)
+          },
+          {
+            name = 'complexity',
+            enabled = false, -- disabled by default - enable explicitly to use
+            min_level = 'L', -- only show L (Large) and XL (Extra Large) complexity by default
+          },
+        },
+        style = {
+          separator = ' • ', -- separator between all lens attributes
+          highlight = 'Comment', -- highlight group for lens text
+          prefix = '┃ ', -- prefix before lens content
+          placement = 'above', -- "above" | "inline" - where to render lenses
+          use_nerdfont = true, -- enable nerd font icons in built-in providers
+        },
+        limits = {
+          exclude = {
+            -- see config.lua for extensive list of default patterns
+          },
+          exclude_gitignored = true, -- respect .gitignore by not processing ignored files
+          max_lines = 1000, -- process only first N lines of large files
+          max_lenses = 70, -- skip rendering if too many lenses generated
+        },
+        debounce_ms = 500, -- unified debounce delay for all providers
+        debug_mode = false,
       }
     end,
   },
