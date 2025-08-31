@@ -765,7 +765,25 @@ require('lazy').setup({
     },
     config = function()
       -- basic setup
-      require('neo-tree').setup()
+      require('neo-tree').setup {
+        window = {
+          width = 30,
+        },
+        filesystem = {
+          filtered_items = {
+            visible = true,
+            hide_dotfiles = false,
+            hide_gitignored = false,
+            show_hidden_count = false,
+            hide_by_name = {
+              -- empty list means nothing is force-hidden
+            },
+            never_show = {
+              '.gitignore_hidden_message',
+            },
+          },
+        },
+      }
 
       -- keymaps for convenience
       vim.keymap.set('n', '<leader>e', '<cmd>Neotree toggle<CR>', { desc = 'Toggle [E]xplorer' })
@@ -1023,15 +1041,18 @@ require('lazy').setup({
     config = function()
       ---@diagnostic disable-next-line: missing-fields
       require('tokyonight').setup {
+        terminal_colors = true,
         styles = {
           comments = { italic = false }, -- Disable italics in comments
+          keywords = { italic = false },
         },
+        day_brightness = 0.5,
       }
 
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'tokyonight-storm'
     end,
   },
 
