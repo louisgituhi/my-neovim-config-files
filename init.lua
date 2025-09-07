@@ -636,6 +636,32 @@ require('lazy').setup({
       })
       vim.lsp.enable 'cssls'
       vim.lsp.enable 'cssmodules'
+      vim.lsp.config('tailwindcss', {
+        capabilities = capabilities,
+        settings = {
+          tailwindCSS = {
+            classAttributes = { 'class', 'className', 'class:list', 'classList', 'ngClass' },
+            includeLanguages = {
+              eelixir = 'html-eex',
+              elixir = 'phoenix-heex',
+              eruby = 'erb',
+              heex = 'phoenix-heex',
+              htmlangular = 'html',
+              templ = 'html',
+            },
+            lint = {
+              cssConflict = 'warning',
+              invalidApply = 'error',
+              invalidConfigPath = 'error',
+              invalidScreen = 'error',
+              invalidTailwindDirective = 'error',
+              invalidVariant = 'error',
+              recommendedVariantOrder = 'warning',
+            },
+            validate = true,
+          },
+        },
+      })
       vim.lsp.enable 'tailwindcss'
       vim.lsp.config('jsonls', {
         capabilities = capabilities,
