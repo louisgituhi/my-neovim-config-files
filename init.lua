@@ -1091,48 +1091,6 @@ require('lazy').setup({
       signature = { enabled = true },
     },
   },
-  {
-    'lewis6991/hover.nvim',
-    config = function()
-      require('hover').setup {
-        providers = {
-          'hover.providers.diagnostic',
-          'hover.providers.lsp',
-          'hover.providers.dap',
-          'hover.providers.man',
-          'hover.providers.dictionary',
-        },
-        preview_opts = {
-          border = 'rounded',
-          max_width = 100,
-          max_height = 30,
-        },
-        preview_window = false,
-        title = true,
-        mouse_providers = { 'hover.providers.lsp' },
-        mouse_delay = 1000,
-      }
-
-      -- Keymaps
-      vim.keymap.set('n', 'K', function()
-        require('hover').open()
-      end, { desc = 'hover.nvim (open)' })
-      vim.keymap.set('n', 'gK', function()
-        require('hover').enter()
-      end, { desc = 'hover.nvim (enter)' })
-      vim.keymap.set('n', '<C-p>', function()
-        require('hover').switch 'previous'
-      end, { desc = 'hover.nvim (prev source)' })
-      vim.keymap.set('n', '<C-n>', function()
-        require('hover').switch 'next'
-      end, { desc = 'hover.nvim (next source)' })
-
-      -- Styling (optional)
-      vim.api.nvim_set_hl(0, 'HoverWindow', { bg = '#1e1e2e', fg = '#cdd6f4' })
-      vim.api.nvim_set_hl(0, 'HoverBorder', { fg = '#a6e3a1', bold = true })
-    end,
-  },
-
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
