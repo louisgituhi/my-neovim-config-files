@@ -89,7 +89,6 @@ P.S. You can delete this when you're done too. It's your config now! :)
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = false
 
@@ -627,10 +626,15 @@ require('lazy').setup({
       })
 
       --  language lsps
+      vim.lsp.enable 'ziggy'
+      vim.lsp.enable 'ziggy-schema'
+      vim.lsp.enable 'zls'
+      vim.lsp.enable 'bashls'
       vim.lsp.enable 'gleam'
       vim.lsp.enable 'biome'
       vim.lsp.enable 'astro'
       vim.lsp.enable 'css_variables'
+      local capabilities = require('blink-cmp').get_lsp_capabilities()
       vim.lsp.config('cssls', {
         capabilities = capabilities,
       })
@@ -726,7 +730,9 @@ require('lazy').setup({
         ts_ls = {
           enabled = true,
         },
-
+        zls = {
+          cmd = { '/usr/local/bin/zls' },
+        },
         lua_ls = {
           -- cmd = { ... },
           -- filetypes = { ... },
@@ -967,8 +973,18 @@ require('lazy').setup({
           }
         end
       end,
+      -- formatters = {
+      --   biome = {
+      --     require_cwd = true,
+      --   },
+      -- },
       formatters_by_ft = {
         lua = { 'stylua' },
+        zig = { 'zig fmt' },
+        javascript = { 'biome', 'biome-organize-imports' },
+        javascriptreact = { 'biome', 'biome-organize-imports' },
+        typescript = { 'biome', 'biome-organize-imports' },
+        typescriptreact = { 'biome', 'biome-organize-imports' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -1060,7 +1076,6 @@ require('lazy').setup({
           lazydev = { module = 'lazydev.integrations.blink', score_offset = 100 },
         },
       },
-
       snippets = { preset = 'luasnip' },
 
       -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
@@ -1075,6 +1090,47 @@ require('lazy').setup({
       -- Shows a signature help window while you type arguments for a function
       signature = { enabled = true },
     },
+  },
+  {
+    'lewis6991/hover.nvim',
+    config = function()
+      require('hover').setup {
+        providers = {
+          'hover.providers.diagnostic',
+          'hover.providers.lsp',
+          'hover.providers.dap',
+          'hover.providers.man',
+          'hover.providers.dictionary',
+        },
+        preview_opts = {
+          border = 'rounded',
+          max_width = 100,
+          max_height = 30,
+        },
+        preview_window = false,
+        title = true,
+        mouse_providers = { 'hover.providers.lsp' },
+        mouse_delay = 1000,
+      }
+
+      -- Keymaps
+      vim.keymap.set('n', 'K', function()
+        require('hover').open()
+      end, { desc = 'hover.nvim (open)' })
+      vim.keymap.set('n', 'gK', function()
+        require('hover').enter()
+      end, { desc = 'hover.nvim (enter)' })
+      vim.keymap.set('n', '<C-p>', function()
+        require('hover').switch 'previous'
+      end, { desc = 'hover.nvim (prev source)' })
+      vim.keymap.set('n', '<C-n>', function()
+        require('hover').switch 'next'
+      end, { desc = 'hover.nvim (next source)' })
+
+      -- Styling (optional)
+      vim.api.nvim_set_hl(0, 'HoverWindow', { bg = '#1e1e2e', fg = '#cdd6f4' })
+      vim.api.nvim_set_hl(0, 'HoverBorder', { fg = '#a6e3a1', bold = true })
+    end,
   },
 
   { -- You can easily change to a different colorscheme.
@@ -1101,7 +1157,6 @@ require('lazy').setup({
       vim.cmd.colorscheme 'tokyonight-storm'
     end,
   },
-
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
 
@@ -1140,6 +1195,7 @@ require('lazy').setup({
 
       -- ... and there is more!
       --  Check out: https://github.com/echasnovski/mini.nvim
+      require('mini.pairs').setup()
     end,
   },
   { -- Highlight, edit, and navigate code
